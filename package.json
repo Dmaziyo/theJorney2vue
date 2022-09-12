@@ -1,12 +1,29 @@
 {
-  "name": "seed",
-  "version": "0.0.1",
+  "name": "thejorney2vue",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack --mode development",
+    "build": "webpack --mode production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dmaziyo/theJorney2vue.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dmaziyo/theJorney2vue/issues"
+  },
+  "homepage": "https://github.com/Dmaziyo/theJorney2vue#readme",
   "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-contrib-watch": "~0.4.4",
-    "grunt-component-build": "~0.3.0",
-    "grunt-contrib-jshint": "~0.6.0",
-    "grunt-mocha": "~0.4.0",
-    "chai": "~1.7.2"
+    "@babel/core": "^7.19.0",
+    "@babel/preset-env": "^7.19.0",
+    "babel-loader": "^8.2.5",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0"
   }
 }
