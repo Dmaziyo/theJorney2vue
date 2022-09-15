@@ -1,4 +1,3 @@
-// 每一个函数对应的是操作元素的DOM属性
 module.exports = {
   text: function (el, value) {
     el.textContent = value || ''
@@ -10,32 +9,29 @@ module.exports = {
     el.classList[value ? 'add' : 'remove'](classname)
   },
   'on-click': {
-    update: function (el, handler, event, directive) {
-      if (!directive.handlers) {
-        directive.handlers = {}
+    update: function (el, handler, event, directiveObj) {
+      if (!directiveObj.handlers) {
+        directiveObj.handlers = {}
       }
-      var handlers = directive.handlers
+      var handlers = directiveObj.handlers
+      // 查看事件是否存在
       if (handlers[event]) {
-        el.removeEventListener(event, handlers[event])
+        el.removeEventListener(event, handler[event])
       }
+      // 回调函数是否存在
       if (handler) {
         handler = handler.bind(el)
+
         el.addEventListener(event, handler)
         handlers[event] = handler
       }
     },
-    unbind: function (el, event, directive) {
-      if (directive.handlers) {
-        el.removeEventListener(event, directive.handlers[event])
+    unbind: function (el, event, directiveObj) {
+      if (directiveObj.handlers) {
+        el.removeEventListener(event, directiveObj.handlers[event])
       }
     },
-    customFilter: function (handler, selectors) {
-      return function (e) {
-        var match = selectors.every(function (selector) {
-          return e.target.webkitMatchesSelector(selector)
-        })
-        if (match) handler.apply(this, arguments)
-      }
-    }
+    // 不知道！！！
+    customFilter: function (handler, selectors) {}
   }
 }

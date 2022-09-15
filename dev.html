@@ -13,14 +13,14 @@
       <p sd-class-red="error" sd-text="hello"></p>
     </div>
     <script>
-      var app = Seed.create({
+      let app = Seed({
         id: 'test',
         // template
         scope: {
           msg: 'hello',
           hello: 'WHWHWHW',
           changeMessage: function () {
-            app.scope.msg = 'hola'
+            scope.msg = 'hola'
           }
         }
       })
