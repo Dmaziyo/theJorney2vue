@@ -5,64 +5,52 @@ const { prefix } = require('./config')
 class Seed {
   constructor({ id, scope }) {
     const root = document.getElementById(id)
-    // opt.scope
-    // internal copy
+    // 每个directive上的变量
     this._bindings = {}
-    // external interface
     this.scope = {}
-
     Object.keys(Directives).forEach(directiveKey => this._bind(directiveKey))
-
-    for (var variable in this._bindings) {
+    for (let variable in this._bindings) {
+      // 把传入的scope值拿过来
       this.scope[variable] = scope[variable]
     }
   }
-
-  _getAttributeKey(key) {
-    return `${prefix}-${key}`
-  }
-
   _bind(directiveKey) {
-    // 获取带有这个指令的所有节点
     const attributeKey = `${prefix}-${directiveKey}`
     const els = document.querySelectorAll(`[${attributeKey}]`)
 
-    // 把directive装到binding上
+    // 把该指令上的变量进行详细描述，绑定到binding上
     ;[].forEach.call(els, (el, idx) => {
       const value = el.getAttribute(`${attributeKey}`)
       el.removeAttribute(attributeKey)
-
-      const [variable, filter] = value.split('|').map(i => i.trim())
-
-      //
+      const [variable, filter] = value.split('|').map(item => item.trim())
+      //   设置双向绑定
       if (!this._bindings[variable]) this._createBinding(variable)
 
       this._bindings[variable].directives.push({
-        filter: filter && Filters[filter],
-        // directive直接变成了函数
         directive: Directives[directiveKey],
-        // 添加了key键
         key: directiveKey,
+        filter: filter && Filters[filter],
         el
       })
     })
   }
-
   _createBinding(variable) {
     this._bindings[variable] = {
       directives: [],
       value: null
     }
     Object.defineProperty(this.scope, variable, {
-      get: () => this._bindings[variable].value,
+      // 使用箭头函数
+      get: () => {
+        return this._bindings[variable].value
+      },
       set: newVal => {
         this._bindings[variable].value = newVal
         this._bindings[variable].directives.forEach(directiveObj => {
-          debugger
           const { directive, key, filter, el } = directiveObj
-          if (typeof directive == 'function')
+          if (typeof directive === 'function') {
             return directive(el, filter ? filter(newVal) : newVal)
-
+          }
           const event = key.split('-')[1]
           directive.update(el, this.scope[variable], event, directiveObj)
         })
@@ -70,5 +58,4 @@ class Seed {
     })
   }
 }
-
 module.exports = Seed
