@@ -3,7 +3,7 @@
   <head>
     <title>title</title>
     <meta charset="utf-8" />
-    <script src="dist/index.min.js"></script>
+    <script src="./dist/index.min.js"></script>
   </head>
   <body>
     <div id="test" sd-on-click="changeMessage | .button">
@@ -13,14 +13,14 @@
       <p sd-class-red="error" sd-text="hello"></p>
     </div>
     <script>
-      let app = Seed({
+      var app = new Seed({
         id: 'test',
         // template
         scope: {
           msg: 'hello',
           hello: 'WHWHWHW',
           changeMessage: function () {
-            scope.msg = 'hola'
+            app.scope.msg = app.scope.msg + '1'
           }
         }
       })
