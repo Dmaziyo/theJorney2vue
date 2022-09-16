@@ -8,32 +8,53 @@ class Seed {
     // 每个directive上的变量
     this._bindings = {}
     this.scope = {}
-    Object.keys(Directives).forEach(directiveKey => this._bind(directiveKey))
+
+    // 递归初始化Node
+    this._compileNode(root)
+
     for (let variable in this._bindings) {
       // 把传入的scope值拿过来
       this.scope[variable] = scope[variable]
     }
   }
-  _bind(directiveKey) {
-    const attributeKey = `${prefix}-${directiveKey}`
-    const els = document.querySelectorAll(`[${attributeKey}]`)
 
-    // 把该指令上的变量进行详细描述，绑定到binding上
-    ;[].forEach.call(els, (el, idx) => {
-      const value = el.getAttribute(`${attributeKey}`)
-      el.removeAttribute(attributeKey)
-      const [variable, filter] = value.split('|').map(item => item.trim())
-      //   设置双向绑定
+  _compileNode(el) {
+    if (el.nodeType === Node.TEXT_NODE) {
+      console.log(el, 'this is text Node')
+    }
+    if (!(el.attributes && el.attributes.length)) return
+    ;[].forEach.call(el.attributes, ({ name, value }) => {
+      //查询el上相关的指令，并获取相关config
+      const directive = this._parseDirective(el, name, value)
+      if (!directive) return
+
+      const { variable } = directive
+      // 创建双向绑定
       if (!this._bindings[variable]) this._createBinding(variable)
-
-      this._bindings[variable].directives.push({
-        directive: Directives[directiveKey],
-        key: directiveKey,
-        filter: filter && Filters[filter],
-        el
-      })
+      this._bindings[variable].directives.push(directive)
     })
+    // 绑定this,使得内部方法也能调用bindings和scope
+    el.childNodes.forEach(this._compileNode.bind(this))
   }
+
+  _parseDirective(el, name, value) {
+    if (name.indexOf(prefix + '-') === -1) return
+    const noPrefix = name.slice(prefix.length + 1)
+    // name: sd-on-click  | sd-text
+    /**
+     * arg可能为undefined or click等事件
+     */
+    const [key, ...arg] = noPrefix.split('-')
+    const [variable, filter] = value.split('|').map(i => i.trim())
+    return {
+      filter: filter && Filters[filter],
+      directive: Directives[key],
+      arg,
+      variable,
+      el
+    }
+  }
+
   _createBinding(variable) {
     this._bindings[variable] = {
       directives: [],
@@ -46,13 +67,15 @@ class Seed {
       },
       set: newVal => {
         this._bindings[variable].value = newVal
+        // 遍历响应绑定该变量的指令
         this._bindings[variable].directives.forEach(directiveObj => {
-          const { directive, key, filter, el } = directiveObj
+          const { directive, arg, filter, el } = directiveObj
+          // 如果指令是函数，直接将el，val传入进行调用
           if (typeof directive === 'function') {
             return directive(el, filter ? filter(newVal) : newVal)
           }
-          const event = key.split('-')[1]
-          directive.update(el, this.scope[variable], event, directiveObj)
+          // 否则进行事件的添加
+          directive.update(el, this.scope[variable], arg, directiveObj)
         })
       }
     })

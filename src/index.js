@@ -1,11 +1,12 @@
 const Seed = require('./seed')
 const Filters = require('./filters')
-module.exports = {
-  create(opt) {
-    return new Seed(opt)
-  },
 
-  filter(name, fn) {
+class Main {
+  constructor(opt) {
+    return new Seed(opt)
+  }
+  static filter(name, fn) {
     Filters[name] = fn
   }
 }
+module.exports = Main

@@ -8,7 +8,7 @@ module.exports = {
   class: function (el, value, classname) {
     el.classList[value ? 'add' : 'remove'](classname)
   },
-  'on-click': {
+  on: {
     update: function (el, handler, event, directiveObj) {
       if (!directiveObj.handlers) {
         directiveObj.handlers = {}
