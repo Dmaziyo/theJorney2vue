@@ -10,15 +10,17 @@
       <p sd-text="msg | capitalize"></p>
       <p sd-show="something">YOYOYO</p>
       <p class="button" sd-text="msg"></p>
-      <p sd-class-red="error" sd-text="hello"></p>
+      <p sd-class-red="error" sd-text="hello | subStr"></p>
     </div>
     <script>
-      var app = new Seed({
+      Seed.filter('subStr', str => str.slice(0, 4))
+      var app = Seed.create({
         id: 'test',
         // template
         scope: {
           msg: 'hello',
           hello: 'WHWHWHW',
+          something: true,
           changeMessage: function () {
             app.scope.msg = app.scope.msg + '1'
           }
