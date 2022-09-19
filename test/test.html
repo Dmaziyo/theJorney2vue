@@ -3,7 +3,7 @@
   <head>
     <title>title</title>
     <meta charset="utf-8" />
-    <script src="./dist/index.min.js"></script>
+    <script src="../dist/index.min.js"></script>
   </head>
   <body>
     <div id="test" sd-on-click="changeMessage | .button">
@@ -13,7 +13,8 @@
       <p sd-class-red="error" sd-text="hello | subStr"></p>
     </div>
     <script>
-      Seed.filter('subStr', str => str.slice(0, 4))
+      Seed.filter('subStr', str => str.slice(0, 3))
+
       var app = new Seed({
         id: 'test',
         // template
@@ -22,7 +23,7 @@
           hello: 'WHWHWHW',
           something: true,
           changeMessage: function () {
-            this.scope.msg = app.scope.msg + '1'
+            app.scope.msg = 'hola'
           }
         }
       })
