@@ -33,10 +33,12 @@ class Seed {
     if (el.nodeType === Node.TEXT_NODE) {
     }
     if (!(el.attributes && el.attributes.length)) return
-    ;[].forEach.call(el.attributes, ({ name, value }) => {
+    const attrs = [].map.call(el.attributes, ({ name, value }) => ({ name, value }))
+    attrs.forEach(({ name, value }) => {
       //查询el上相关的指令，并获取相关config
       const directive = Directive.parse(name, value)
       if (!directive) return
+      el.removeAttribute(name)
       this._bind(el, directive)
     })
     // 绑定this,使得内部方法也能调用bindings和scope
