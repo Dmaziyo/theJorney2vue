@@ -14,16 +14,13 @@
     </div>
     <script>
       Seed.filter('subStr', str => str.slice(0, 4))
-      var app = new Seed({
-        id: 'test',
+      var app = new Seed('test', {
         // template
-        scope: {
-          msg: 'hello',
-          hello: 'WHWHWHW',
-          something: true,
-          changeMessage: function () {
-            this.scope.msg = app.scope.msg + '1'
-          }
+        msg: 'hello',
+        hello: 'WHWHWHW',
+        something: true,
+        changeMessage: function () {
+          this.scope.msg = app.scope.msg + '1'
         }
       })
     </script>

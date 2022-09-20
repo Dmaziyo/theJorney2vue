@@ -5,8 +5,9 @@ module.exports = {
   show: function (value) {
     this.el.style.display = value ? '' : 'none'
   },
-  class: function (value, classname) {
-    this.el.classList[value ? 'add' : 'remove'](classname)
+  // 添加类名,只要结果为true则添加
+  class: function (value) {
+    this.el.classList[value ? 'add' : 'remove'](this.arg)
   },
   on: {
     // 绑定函数
@@ -20,8 +21,9 @@ module.exports = {
       if (handler) {
         handler = handler.bind(seed)
 
+        // 修复handlers不存在
         el.addEventListener(event, handler)
-        handlers[event] = handler
+        this.handlers = { [event]: handler, ...handlers }
       }
     },
     unbind: function () {
@@ -31,5 +33,8 @@ module.exports = {
     },
     // 不知道！！！
     customFilter: function (handler, selectors) {}
+  },
+  each: {
+    update(collection) {}
   }
 }

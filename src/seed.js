@@ -1,8 +1,9 @@
+const directive = require('./directive')
 const Directive = require('./directive')
 
 class Seed {
-  constructor({ id, scope }) {
-    const root = document.getElementById(id)
+  constructor(root, scope) {
+    this.el = root
     // 每个directive上的变量
     this._bindings = {}
     this.scope = {}
@@ -16,25 +17,39 @@ class Seed {
     }
   }
 
+  destroy() {
+    for (let bindKey in this._bindings) {
+      this._bindings[bindKey].directives.forEach(directive => {
+        // 解绑事件
+        if (!directive.unbind) return
+        directive.unbind()
+      })
+      delete this._bindings[bindKey]
+    }
+    this.el.parentNode.removeChild(this.el)
+  }
+
   _compileNode(el) {
     if (el.nodeType === Node.TEXT_NODE) {
-      console.log(el, 'this is text Node')
     }
     if (!(el.attributes && el.attributes.length)) return
     ;[].forEach.call(el.attributes, ({ name, value }) => {
       //查询el上相关的指令，并获取相关config
       const directive = Directive.parse(name, value)
       if (!directive) return
-
-      directive.el = el
-      directive.seed = this
-      const { variable } = directive
-      // 创建双向绑定
-      if (!this._bindings[variable]) this._createBinding(variable)
-      this._bindings[variable].directives.push(directive)
+      this._bind(el, directive)
     })
     // 绑定this,使得内部方法也能调用bindings和scope
     el.childNodes.forEach(this._compileNode.bind(this))
+  }
+
+  _bind(el, directive) {
+    directive.el = el
+    directive.seed = this
+    const { variable } = directive
+    // 创建双向绑定
+    if (!this._bindings[variable]) this._createBinding(variable)
+    this._bindings[variable].directives.push(directive)
   }
 
   _createBinding(variable) {
@@ -50,6 +65,7 @@ class Seed {
       set: newVal => {
         this._bindings[variable].value = newVal
         // 遍历响应绑定该变量的指令
+
         this._bindings[variable].directives.forEach(directive => {
           directive.update(newVal)
         })

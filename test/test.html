@@ -4,29 +4,58 @@
     <title>title</title>
     <meta charset="utf-8" />
     <script src="../dist/index.min.js"></script>
+    <style>
+      .red {
+        color: red;
+      }
+      .todo.done {
+        text-decoration: line-through;
+      }
+    </style>
   </head>
   <body>
-    <div id="test" sd-on-click="changeMessage | .button">
-      <p sd-text="msg | capitalize"></p>
-      <p sd-show="something">YOYOYO</p>
-      <p class="button" sd-text="msg"></p>
-      <p sd-class-red="error" sd-text="hello | subStr"></p>
+    <div id="test" sd-on-click="changeMessage | delegate .button">
+      <p sd-text="removeMsg | capitalize" sd-on-click="remove"></p>
+      <p sd-text="msg.wow | uppercase" class="button"></p>
+      <p sd-text="total | money"></p>
+      <p sd-class-red="error" sd-text="hello"></p>
+      <ul sd-show="todos">
+        <li sd-each-todo="todos">
+          <span class="todo" sd-text="todo.title" sd-class-done="todo.done"></span>
+        </li>
+      </ul>
     </div>
     <script>
-      Seed.filter('subStr', str => str.slice(0, 3))
-
-      var app = new Seed({
-        id: 'test',
-        // template
-        scope: {
-          msg: 'hello',
-          hello: 'WHWHWHW',
-          something: true,
-          changeMessage: function () {
-            app.scope.msg = 'hola'
-          }
+      Seed.filter('money', value => '$' + value.toFixed(2))
+      var list = [
+        {
+          title: 'make this shit kinda work',
+          done: true
+        },
+        {
+          title: 'make this shit work',
+          done: false
+        },
+        {
+          title: 'more features!!!',
+          done: false
+        }
+      ]
+      var s = Date.now()
+      var todos = new Seed('test', {
+        total: Math.random() * 100000,
+        'msg.wow': 'wow',
+        removeMsg: 'remove',
+        hello: 'hello',
+        todos: list,
+        changeMessage: function () {
+          this.scope['msg.wow'] = 'hola'
+        },
+        remove: function () {
+          this.destroy()
         }
       })
+      console.log(Date.now() - s + 'ms')
     </script>
   </body>
 </html>
