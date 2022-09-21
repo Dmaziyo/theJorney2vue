@@ -1,27 +1,24 @@
+const { block } = require('./config')
 module.exports = {
   text: function (value) {
+    // debugger
     this.el.textContent = value || ''
   },
   show: function (value) {
     this.el.style.display = value ? '' : 'none'
   },
-  // 添加类名,只要结果为true则添加
   class: function (value) {
     this.el.classList[value ? 'add' : 'remove'](this.arg)
   },
   on: {
-    // 绑定函数
     update: function (handler) {
       const { handlers = {}, arg: event, el, seed } = this
-      // 查看事件是否存在
-      if (handlers[event]) {
-        el.removeEventListener(event, handlers[event])
-      }
-      // 回调函数是否存在
-      if (handler) {
-        handler = handler.bind(seed)
 
-        // 修复handlers不存在
+      if (handlers[event]) el.removeEventListener(event, handlers[event])
+
+      if (handler) {
+        // bind scope to handler
+        handler = handler.bind(seed)
         el.addEventListener(event, handler)
         this.handlers = { [event]: handler, ...handlers }
       }
@@ -31,10 +28,41 @@ module.exports = {
         this.el.removeEventListener(this.arg, this.handlers[this.arg])
       }
     },
-    // 不知道！！！
-    customFilter: function (handler, selectors) {}
+    customFilter: function (handler, selectors) {
+      return function (e) {
+        var match = selectors.every(function (selector) {
+          return e.target.webkitMatchesSelector(selector)
+        })
+        if (match) handler.apply(this, arguments)
+      }
+    }
   },
+
   each: {
-    update(collection) {}
+    bind() {
+      // 将元素从ul中删除，但记录在directive里面,同时建立联系
+      this.el.setAttribute(block, true)
+      this.container = this.el.parentNode
+      this.el.parentNode.removeChild(this.el)
+    },
+    update(collection) {
+      let str = ''
+      debugger
+      // 用于clone再生成实例时,防止因为block属性的存在而跳过其内容
+      this.el.removeAttribute(block)
+      collection.forEach(element => {
+        const seed = this.buildHtml(element)
+        // 为ul添加子结点
+        this.container.append(seed.el)
+      })
+    },
+    buildHtml(element) {
+      const data = Object.keys(element).reduce((pre, cur) => {
+        pre[this.arg + '.' + cur] = element[cur]
+        return pre
+      }, {})
+      const node = this.el.cloneNode(true)
+      return new Seed(node, data)
+    }
   }
 }

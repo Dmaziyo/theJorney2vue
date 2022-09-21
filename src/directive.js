@@ -5,10 +5,9 @@ const { prefix } = require('./config')
 class Directive {
   constructor(name, value) {
     const noPrefix = name.substr(prefix.length + 1)
-    const [key, ...arg] = noPrefix.split('-')
+    const [key, arg] = noPrefix.split('-')
     const [variable, filter] = value.split('|').map(i => i.trim())
 
-    // if(!Directives[key]) return;
     // for directives on method
     this.arg = arg
     // for seed
@@ -21,8 +20,10 @@ class Directive {
 
   _buildUpdate(key) {
     const def = Directives[key]
+    // 指令函数与_update绑定在一起
     if (typeof def == 'function') return (this._update = def)
 
+    // on的属性函数也绑定在一起，尤其是_update也存在
     for (let prop in def) {
       this[prop == 'update' ? '_update' : prop] = def[prop]
     }
