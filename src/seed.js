@@ -49,7 +49,7 @@ class Seed {
       })
     }
     // 给遍历模板元素标记因为不需要子元素，所以直接pass，然后删除
-    if (el.getAttribute(block)) return console.log(el, 'block')
+    if (el[block]) return console.log(el, 'block')
     el.childNodes.forEach(this._compileNode.bind(this))
   }
 

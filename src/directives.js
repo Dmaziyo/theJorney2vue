@@ -41,18 +41,23 @@ module.exports = {
   each: {
     bind() {
       // 将元素从ul中删除，但记录在directive里面,同时建立联系
-      this.el.setAttribute(block, true)
-      this.container = this.el.parentNode
-      this.el.parentNode.removeChild(this.el)
+      this.el[block] = true
+      const ctn = (this.container = this.el.parentNode)
+      this.marker = document.createComment('sd-each-' + this.arg + '-marker')
+      ctn.insertBefore(this.marker, this.el)
+      this.container.removeChild(this.el)
+      this.childSeeds = []
     },
     update(collection) {
       let str = ''
-      debugger
+      // 删除seeds
+      this.childSeeds.forEach(seed => seed.destroy())
       // 用于clone再生成实例时,防止因为block属性的存在而跳过其内容
       this.el.removeAttribute(block)
       collection.forEach(element => {
         const seed = this.buildHtml(element)
         // 为ul添加子结点
+        this.childSeeds.push(seed)
         this.container.append(seed.el)
       })
     },
