@@ -1,4 +1,5 @@
 const { block } = require('./config')
+// 引用mutator方法
 module.exports = {
   text: function (value) {
     // debugger
@@ -50,6 +51,15 @@ module.exports = {
     },
     update(collection) {
       let str = ''
+
+      /*
+        在更新前，先重置所有todo子节点
+      */
+
+      /*
+        监听数组
+      */
+
       // 用于clone再生成实例时,防止因为block属性的存在而跳过其内容
       this.el.removeAttribute(block)
       collection.forEach(element => {
@@ -59,6 +69,9 @@ module.exports = {
         this.container.append(seed.el)
       })
     },
+    /**
+     为绑定的数组的方法设置回调函数，每当修改数组的时候,回调update
+     */
     buildHtml(element) {
       const data = Object.keys(element).reduce((pre, cur) => {
         pre[this.arg + '.' + cur] = element[cur]
