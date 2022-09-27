@@ -50,8 +50,6 @@ module.exports = {
     },
     update(collection) {
       let str = ''
-      // 删除seeds
-      this.childSeeds.forEach(seed => seed.destroy())
       // 用于clone再生成实例时,防止因为block属性的存在而跳过其内容
       this.el.removeAttribute(block)
       collection.forEach(element => {
