@@ -1,4 +1,4 @@
-const { block } = require('./config')
+const { block, mutatorMethods } = require('./config')
 // 引用mutator方法
 module.exports = {
   text: function (value) {
@@ -52,13 +52,11 @@ module.exports = {
     update(collection) {
       let str = ''
 
-      /*
-        在更新前，先重置所有todo子节点
-      */
+      //clear old childSeeds
+      this.childSeeds.forEach(seed => seed.destroy())
+      this.childSeeds = []
 
-      /*
-        监听数组
-      */
+      this.watchArray(collection)
 
       // 用于clone再生成实例时,防止因为block属性的存在而跳过其内容
       this.el.removeAttribute(block)
@@ -72,6 +70,18 @@ module.exports = {
     /**
      为绑定的数组的方法设置回调函数，每当修改数组的时候,回调update
      */
+    watchArray(collection) {
+      mutatorMethods.forEach(method => {
+        // 解构符会默认将数据变成数组
+        collection[method] = (...args) => {
+          console.log('args', args)
+          console.log('...args', ...args)
+          Array.prototype[method].call(collection, ...args)
+          this.update(collection)
+        }
+      })
+      console.log('collection', collection)
+    },
     buildHtml(element) {
       const data = Object.keys(element).reduce((pre, cur) => {
         pre[this.arg + '.' + cur] = element[cur]
