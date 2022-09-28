@@ -6,17 +6,26 @@ class Directive {
   constructor(name, value) {
     const noPrefix = name.substr(prefix.length + 1)
     const [key, arg] = noPrefix.split('-')
+    // 获取多个filter
     const [variable, filter] = value.split('|').map(i => i.trim())
 
     // for directives on method
     this.arg = arg
     // for seed
     this.variable = variable
-
+    // 调用方法将filters全部解析并添加到directive中去
     this._buildUpdate(key)
 
     this._filter = Filters[filter]
   }
+
+  /**
+   添加解析绑定Filters的方法
+   */
+
+  /**
+   传入newVal调用之前绑定的filters方法,并返回新的值
+   */
 
   _buildUpdate(key) {
     const def = Directives[key]
@@ -31,6 +40,7 @@ class Directive {
 
   update(newVal) {
     const { _filter } = this
+    // 修改filter
     this._update(_filter ? _filter(newVal) : newVal)
   }
 }
