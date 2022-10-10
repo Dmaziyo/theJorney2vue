@@ -72,8 +72,6 @@ module.exports = {
       mutatorMethods.forEach(method => {
         // 解构符会默认将数据变成数组
         collection[method] = (...args) => {
-          console.log('args', args)
-          console.log('...args', ...args)
           Array.prototype[method].call(collection, ...args)
           this.update(collection)
         }
@@ -86,6 +84,7 @@ module.exports = {
         return pre
       }, {})
       const node = this.el.cloneNode(true)
+      // 添加options{parentScope,prefixReg}用于标记子seed实例
       return new Seed(node, data)
     }
   }

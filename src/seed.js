@@ -3,6 +3,7 @@ const { block } = require('./config')
 
 class Seed {
   constructor(root, scope) {
+    // 为子seed添加options
     this.el = root
     // internal copy
     this._bindings = {}
@@ -58,7 +59,7 @@ class Seed {
     directive.el = el
     directive.seed = this
     const { variable } = directive
-
+    // 为子变量添加前缀
     if (!this._bindings[variable]) this._createBinding(variable)
     this._bindings[variable].directives.push(directive)
 

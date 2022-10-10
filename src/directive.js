@@ -3,6 +3,7 @@ const Directives = require('./directives')
 const { prefix } = require('./config')
 
 class Directive {
+  // 添加了参数配置选项
   constructor(name, value) {
     const noPrefix = name.substr(prefix.length + 1)
     const [key, arg] = noPrefix.split('-')
