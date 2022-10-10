@@ -2,13 +2,15 @@ const Directive = require('./directive')
 const { block } = require('./config')
 
 class Seed {
-  constructor(root, scope) {
+  constructor(root, scope, options) {
     // 为子seed添加options
+    if (typeof root == 'string') root = document.getElementById(root)
     this.el = root
     // internal copy
     this._bindings = {}
     // external interface
     this.scope = {}
+    this._options = options || {}
     this._compileNode(root)
 
     for (var variable in this._bindings) {
@@ -58,8 +60,10 @@ class Seed {
   _bind(el, directive) {
     directive.el = el
     directive.seed = this
-    const { variable } = directive
-    // 为子变量添加前缀
+    const epr = this._options.eachPrefixRE
+    let { variable } = directive
+    variable = epr ? variable.replace(epr, '') : variable
+
     if (!this._bindings[variable]) this._createBinding(variable)
     this._bindings[variable].directives.push(directive)
 

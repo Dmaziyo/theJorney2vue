@@ -5,11 +5,8 @@ const Filters = require('./filters')
  */
 class Main {
   // 添加str判断
-  constructor(root, scope) {
-    // 优化初始seed实例
-    if (typeof root == 'string') root = document.getElementById(root)
-
-    return new Seed(root, scope)
+  constructor(...args) {
+    return new Seed(...args)
   }
 
   static filter(name, fn) {

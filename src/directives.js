@@ -79,13 +79,13 @@ module.exports = {
       console.log('collection', collection)
     },
     buildHtml(element) {
-      const data = Object.keys(element).reduce((pre, cur) => {
-        pre[this.arg + '.' + cur] = element[cur]
-        return pre
-      }, {})
+      // 相比之前，直接自己去掉字符串变量todo.message的前缀todo
       const node = this.el.cloneNode(true)
       // 添加options{parentScope,prefixReg}用于标记子seed实例
-      return new Seed(node, data)
+      return new Seed(node, element, {
+        eachPrefixRE: new RegExp(`^${this.arg}.`),
+        parentScope: this.seed
+      })
     }
   }
 }

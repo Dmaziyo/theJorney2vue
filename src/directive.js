@@ -4,7 +4,7 @@ const { prefix } = require('./config')
 
 class Directive {
   // 添加了参数配置选项
-  constructor(name, value) {
+  constructor(name, value, options = {}) {
     const noPrefix = name.substr(prefix.length + 1)
     const [key, arg] = noPrefix.split('-')
     // 获取多个filter
