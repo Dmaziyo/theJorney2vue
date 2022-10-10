@@ -31,7 +31,7 @@ class Seed {
   }
 
   _compileNode(el) {
-    if (el.nodeType === 3) return
+    if (el.nodeType === Node.TEXT_NODE) return
 
     if (el.attributes && el.attributes.length) {
       // attrs should copy out

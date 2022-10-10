@@ -7,25 +7,37 @@ class Directive {
     const noPrefix = name.substr(prefix.length + 1)
     const [key, arg] = noPrefix.split('-')
     // 获取多个filter
-    const [variable, filter] = value.split('|').map(i => i.trim())
+    const [variable, ...filters] = value.split('|').map(i => i.trim())
 
     // for directives on method
     this.arg = arg
     // for seed
     this.variable = variable
     // 调用方法将filters全部解析并添加到directive中去
-    this._buildUpdate(key)
+    this._parseFilters(filters)
 
-    this._filter = Filters[filter]
+    this._buildUpdate(key)
   }
 
-  /**
-   添加解析绑定Filters的方法
-   */
+  // 把当前指令的filter以及参数添加至_filters中
+  _parseFilters(filters) {
+    if (filters.length) {
+      this._filters = []
+      filters.forEach(filter => {
+        const [name, ...args] = filter.split(/\s+/)
+        const apply = Filters[name]
+        if (!apply) throw new Error('invalid filter' + name)
+        this._filters.push({ apply, args })
+      })
+    }
+  }
 
-  /**
-   传入newVal调用之前绑定的filters方法,并返回新的值
-   */
+  _applyFilters(value) {
+    let tmpVal = value
+    this._filters.forEach(({ apply, args }) => {
+      args.unshift(tmpVal)
+    })
+  }
 
   _buildUpdate(key) {
     const def = Directives[key]

@@ -58,8 +58,6 @@ module.exports = {
 
       this.watchArray(collection)
 
-      // 用于clone再生成实例时,防止因为block属性的存在而跳过其内容
-      this.el.removeAttribute(block)
       collection.forEach(element => {
         const seed = this.buildHtml(element)
         // 为ul添加子结点
