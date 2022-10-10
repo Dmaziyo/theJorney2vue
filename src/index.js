@@ -14,6 +14,8 @@ class Main {
   static filter(name, fn) {
     Filters[name] = fn
   }
+
+  // 添加自定义指令
 }
 
 module.exports = Main
