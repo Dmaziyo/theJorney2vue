@@ -6,6 +6,9 @@ class Seed {
     // 为子seed添加options
     if (typeof root == 'string') root = document.getElementById(root)
     this.el = root
+    /**
+     * 获取Controller类型
+     */
     // internal copy
     this._bindings = {}
     // external interface
@@ -16,8 +19,10 @@ class Seed {
     for (var variable in this._bindings) {
       this.scope[variable] = scope[variable]
     }
+    // 调用controller
   }
 
+  // 添加将属性的
   destroy() {
     // clean scene: call directives unbind
     for (let bindKey in this._bindings) {

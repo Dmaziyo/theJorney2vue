@@ -1,6 +1,6 @@
 const Filters = require('./filters')
 const Directives = require('./directives')
-const { prefix } = require('./config')
+const { prefix, CONTROLLER } = require('./config')
 
 class Directive {
   // 添加了参数配置选项
@@ -60,6 +60,7 @@ class Directive {
 
 module.exports = {
   parse(name, value) {
+    // 不解析controller
     if (name.indexOf(prefix + '-') == -1) return
 
     return new Directive(name, value)

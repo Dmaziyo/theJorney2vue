@@ -1,4 +1,4 @@
-const { block, mutatorMethods } = require('./config')
+const { BLOCK, mutatorMethods } = require('./config')
 // 引用mutator方法
 module.exports = {
   text: function (value) {
@@ -42,7 +42,7 @@ module.exports = {
   each: {
     bind() {
       // 将元素从ul中删除，但记录在directive里面,同时建立联系
-      this.el[block] = true
+      this.el[BLOCK] = true
       const ctn = (this.container = this.el.parentNode)
       this.marker = document.createComment('sd-each-' + this.arg + '-marker')
       ctn.insertBefore(this.marker, this.el)
@@ -81,7 +81,11 @@ module.exports = {
     buildHtml(element) {
       // 相比之前，直接自己去掉字符串变量todo.message的前缀todo
       const node = this.el.cloneNode(true)
-      // 添加options{parentScope,prefixReg}用于标记子seed实例
+      // 添加options{parentScope,prefixReg}用于去掉变量名前缀
+      /**
+       * 例如：todo.msg
+       * 就去掉todo.->msg,方便直接遍历
+       */
       return new Seed(node, element, {
         eachPrefixRE: new RegExp(`^${this.arg}.`),
         parentScope: this.seed

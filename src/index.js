@@ -3,6 +3,7 @@ const Filters = require('./filters')
 /**
  * 将绑定each指令内部的元素用模板li生成seed实例，添加至绑定元素的父元素(即ul元素)
  */
+//继承Seed,同时添加自定义controller
 class Main {
   // 添加str判断
   constructor(...args) {
