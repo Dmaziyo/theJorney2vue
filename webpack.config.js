@@ -5,7 +5,7 @@ module.exports = {
     main: path.resolve(__dirname, './src/index.js')
   },
   output: {
-    filename: 'index.min.js',
+    filename: 'seed.js',
     path: path.resolve(__dirname, 'dist'),
     library: 'Seed'
   },

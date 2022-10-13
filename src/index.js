@@ -1,13 +1,14 @@
 const Seed = require('./seed')
 const Filters = require('./filters')
+const Controller = require('./controllers')
+const config = require('./config')
 /**
  * 将绑定each指令内部的元素用模板li生成seed实例，添加至绑定元素的父元素(即ul元素)
  */
-//继承Seed,同时添加自定义controller
-class Main {
-  // 添加str判断
-  constructor(...args) {
-    return new Seed(...args)
+class Main extends Seed {
+  // 将自定义controller
+  static controller(name, extensions) {
+    Controller[name] = extensions
   }
 
   static filter(name, fn) {

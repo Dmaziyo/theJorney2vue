@@ -1,14 +1,13 @@
 const Directive = require('./directive')
-const { block } = require('./config')
+const { block, CONTROLLER, BLOCK } = require('./config')
+const Controllers = require('./controllers')
 
 class Seed {
   constructor(root, scope, options) {
     // 为子seed添加options
     if (typeof root == 'string') root = document.getElementById(root)
     this.el = root
-    /**
-     * 获取Controller类型
-     */
+    this.controllerName = this.el.getAttribute(CONTROLLER)
     // internal copy
     this._bindings = {}
     // external interface
@@ -19,7 +18,7 @@ class Seed {
     for (var variable in this._bindings) {
       this.scope[variable] = scope[variable]
     }
-    // 调用controller
+    this._extension()
   }
 
   // 添加将属性的
@@ -36,6 +35,15 @@ class Seed {
 
     // rm dom
     this.el.parentNode.removeChild(this.el)
+  }
+
+  _extension() {
+    const controller = Controllers[this.controllerName]
+    for (let ext in controller) {
+      if (this.scope[ext])
+        console.warn('extension already exist, will be overwritten. extension=', ext)
+      this.scope[ext] = controller[ext]
+    }
   }
 
   _compileNode(el) {
@@ -57,7 +65,7 @@ class Seed {
       })
     }
     // 给遍历模板元素标记因为不需要子元素，所以直接pass，然后删除
-    if (el[block]) return console.log(el, 'block')
+    if (el[BLOCK]) return console.log(el, 'BLOCK')
     el.childNodes.forEach(this._compileNode.bind(this))
   }
 

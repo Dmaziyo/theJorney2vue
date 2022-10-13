@@ -61,7 +61,7 @@ class Directive {
 module.exports = {
   parse(name, value) {
     // 不解析controller
-    if (name.indexOf(prefix + '-') == -1) return
+    if (name.indexOf(prefix + '-') == -1 || name == CONTROLLER) return
 
     return new Directive(name, value)
   }
