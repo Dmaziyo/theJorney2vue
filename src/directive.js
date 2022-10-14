@@ -5,15 +5,15 @@ const { prefix, CONTROLLER } = require('./config')
 class Directive {
   // 添加了参数配置选项
   constructor(name, value, options = {}) {
-    // 修改解析正则表达式
+    // 获取指令name
+    const key = name.substr(prefix.length + 1)
     /**
-     * sd-on-click ="changeMessage" => sd-on="click:changeMessage"
+     * sd-on="click:changeMessage | delegate .button" => noArg 解析为changeMessage | delegate .button
+     * sd-text="msg | capitalize" =>noArg解析为msg | capitalize
      */
-    const noPrefix = name.substr(prefix.length + 1)
-    const [key, arg] = noPrefix.split('-')
-    // 获取多个filter
-    const [variable, ...filters] = value.split('|').map(i => i.trim())
-
+    let [, arg, noArg] = value.match(/(^\w+):(.+)/) || []
+    noArg = noArg ? noArg : value
+    const [variable, ...filters] = noArg.split('|').map(i => i.trim())
     // for directives on method
     this.arg = arg
     // for seed
