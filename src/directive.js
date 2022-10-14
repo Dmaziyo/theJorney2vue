@@ -25,6 +25,10 @@ class Directive {
     if (filters.length) {
       this._filters = []
       filters.forEach(filter => {
+        // 修改解析正则表达式
+        /**
+         * sd-on-click ="changeMessage" => sd-on="click:changeMessage"
+         */
         const [name, ...args] = filter.split(/\s+/)
         const apply = Filters[name]
         if (!apply) throw new Error('invalid filter' + name)
