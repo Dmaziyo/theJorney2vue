@@ -15,7 +15,7 @@ class Seed {
     this._options = options || {}
     this._compileNode(root)
 
-    for (var variable in this._bindings) {
+    for (var variable in scope) {
       this.scope[variable] = scope[variable]
     }
     this._extension()
