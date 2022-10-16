@@ -41,7 +41,7 @@ class Seed {
     const controller = Controllers[this.controllerName]
     controller.call(null, this.scope, this)
   }
-
+  // 先判断有无each指令,然后给添加binding,然后跳过执行其余指令，用于clone
   _compileNode(el) {
     if (el.className === 'todo') {
       console.log('todolist')
