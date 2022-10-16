@@ -51,7 +51,6 @@ module.exports = {
     },
     update(collection) {
       let str = ''
-
       //clear old childSeeds
       this.childSeeds.forEach(seed => seed.destroy())
       this.childSeeds = []
@@ -78,17 +77,22 @@ module.exports = {
       })
       console.log('collection', collection)
     },
-    buildHtml(element) {
+    buildHtml(data) {
       // 相比之前，直接自己去掉字符串变量todo.message的前缀todo
-      const node = this.el.cloneNode(true)
+      const el = this.el.cloneNode(true)
       // 添加options{parentScope,prefixReg}用于去掉变量名前缀
       /**
        * 例如：todo.msg
        * 就去掉todo.->msg,方便直接遍历
        */
-      return new Seed(node, element, {
-        eachPrefixRE: new RegExp(`^${this.arg}.`),
-        parentScope: this.seed
+      debugger
+      return new Seed({
+        el,
+        data,
+        options: {
+          eachPrefixRE: new RegExp(`^${this.arg}.`),
+          parentScope: this.seed
+        }
       })
     }
   }

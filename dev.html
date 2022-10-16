@@ -3,26 +3,91 @@
   <head>
     <title>title</title>
     <meta charset="utf-8" />
-    <script src="./dist/seed.js"></script>
+    <script src="dist/seed.js"></script>
+    <style type="text/css">
+      .red {
+        color: red;
+      }
+      .todo.done {
+        text-decoration: line-through;
+      }
+    </style>
   </head>
   <body>
-    <div id="test" sd-on-click="changeMessage | .button">
+    <div
+      id="app"
+      sd-controller="TodoList"
+      sd-on="click:changeMessage | delegate .button"
+    >
       <p sd-text="msg | capitalize"></p>
-      <p sd-show="something">YOYOYO</p>
-      <p class="button" sd-text="msg"></p>
-      <p sd-class-red="error" sd-text="hello | subStr"></p>
+      <p sd-text="msg | uppercase"></p>
+      <p sd-on="click:remove">bye</p>
+      <p sd-text="total | money"></p>
+      <p class="button">Change Message</p>
+      <p sd-class="red:error" sd-show="error">Error</p>
+      <ul sd-show="todos">
+        <li
+          class="todo"
+          sd-controller="Todo"
+          sd-each="todo:todos"
+          sd-class="done:todo.done"
+          sd-on="click:changeMessage, click:todo.toggle"
+          sd-text="todo.title"
+        ></li>
+      </ul>
     </div>
     <script>
-      Seed.filter('subStr', str => str.slice(0, 4))
-      var app = new Seed('test', {
-        // template
-        msg: 'hello',
-        hello: 'WHWHWHW',
-        something: true,
-        changeMessage: function () {
-          this.scope.msg = app.scope.msg + '1'
+      // var Seed = require('seed')
+
+      Seed.filter('money', function (value) {
+        return value ? '$' + value.toFixed(2) : ''
+      })
+
+      Seed.controller('TodoList', function (scope, seed) {
+        console.log('controller invoked')
+        scope.changeMessage = function () {
+          scope.msg = (Math.random() * 100).toFixed(2) + '% awesomeness'
+        }
+        scope.remove = function () {
+          seed.destroy()
         }
       })
+
+      Seed.controller('Todo', function (scope) {
+        scope.toggle = function () {
+          scope.done = !scope.done
+        }
+      })
+
+      var s = Date.now()
+
+      var data = {
+        msg: 'hello!',
+        total: 9999,
+        error: true,
+        todos: [
+          {
+            title: 'hello!',
+            done: true
+          },
+          {
+            title: 'hello!!',
+            done: false
+          },
+          {
+            title: 'hello!!!',
+            done: false
+          }
+        ]
+      }
+
+      var app = new Seed({
+        //传入querySelector选择器
+        el: '#app',
+        data: data
+      })
+
+      console.log(Date.now() - s + 'ms')
     </script>
   </body>
 </html>

@@ -3,20 +3,20 @@ const { CONTROLLER, BLOCK } = require('./config')
 const Controllers = require('./controllers')
 
 class Seed {
-  constructor(root, scope, options) {
-    // 为子seed添加options
-    if (typeof root == 'string') root = document.getElementById(root)
-    this.el = root
+  constructor({ el, data, options }) {
+    // 利用query选择器
+    if (typeof el == 'string') el = document.querySelector(el)
+    this.el = el
     this.controllerName = this.el.getAttribute(CONTROLLER)
     // internal copy
     this._bindings = {}
     // external interface
     this.scope = {}
     this._options = options || {}
-    this._compileNode(root)
+    this._compileNode(this.el)
 
-    for (var variable in scope) {
-      this.scope[variable] = scope[variable]
+    for (var variable in data) {
+      this.scope[variable] = data[variable]
     }
     this._extension()
   }
@@ -43,6 +43,10 @@ class Seed {
   }
 
   _compileNode(el) {
+    if (el.className === 'todo') {
+      console.log('todolist')
+      debugger
+    }
     if (el.nodeType === Node.TEXT_NODE) return
 
     if (el.attributes && el.attributes.length) {
@@ -77,6 +81,7 @@ class Seed {
     this._bindings[variable].directives.push(directive)
 
     // 用于todos的绑定
+    // 将元素从ul中删除，但记录在directive里面,同时建立联系
     if (directive.bind) directive.bind.call(directive)
   }
 

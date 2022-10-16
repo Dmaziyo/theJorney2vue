@@ -14,14 +14,14 @@
     </style>
   </head>
   <body>
-    <div id="test" sd-on-click="changeMessage | delegate .button">
+    <div id="test" sd-on="click:changeMessage | delegate .button">
       <!-- 增加filter -->
-      <p sd-text="removeMsg | capitalize | uppercase" sd-on-click="remove"></p>
+      <p sd-text="removeMsg | capitalize | uppercase" sd-on="click:remove"></p>
       <p sd-text="msg.wow | uppercase" class="button"></p>
       <p sd-text="total | money"></p>
       <p sd-class-red="error" sd-text="hello"></p>
       <ul sd-show="todos">
-        <li sd-each-todo="todos">
+        <li sd-each="todos:todos">
           <span class="todo" sd-text="todo.title" sd-class-done="todo.done"></span>
         </li>
       </ul>
