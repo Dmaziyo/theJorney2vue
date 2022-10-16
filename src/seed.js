@@ -1,5 +1,5 @@
 const Binding = require('./binding')
-const { CONTROLLER, BLOCK } = require('./config')
+const { CONTROLLER, EACH } = require('./config')
 const Controllers = require('./controllers')
 
 class Seed {
@@ -21,6 +21,35 @@ class Seed {
     this._extension()
   }
 
+  // 先判断有无each指令,然后给添加binding,然后跳过执行其余指令，用于clone
+  _compileNode(el) {
+    if (el.nodeType === Node.TEXT_NODE) return
+
+    if (el.attributes && el.attributes.length) {
+      const build = (name, value) => {
+        const directive = Binding.parse(name, value)
+        if (!directive) return
+        this._bind(el, directive)
+        // 移除结点上的指令
+        el.removeAttribute(name)
+      }
+      const ctrol = el.getAttribute(CONTROLLER)
+      const isEach = el.getAttribute(EACH)
+      console.log('Controller Name', this.controllerName, isEach)
+      if (ctrol != this.controllerName && isEach) {
+        debugger
+        return build(EACH, isEach)
+      }
+      // attrs should copy out
+      const attrs = [].map.call(el.attributes, ({ name, value }) => ({
+        name,
+        value
+      }))
+      attrs.forEach(({ name, value }) => build(name, value))
+    }
+    el.childNodes.forEach(this._compileNode.bind(this))
+  }
+
   // 添加将属性的
   destroy() {
     // clean scene: call directives unbind
@@ -40,33 +69,6 @@ class Seed {
   _extension() {
     const controller = Controllers[this.controllerName]
     controller.call(null, this.scope, this)
-  }
-  // 先判断有无each指令,然后给添加binding,然后跳过执行其余指令，用于clone
-  _compileNode(el) {
-    if (el.className === 'todo') {
-      console.log('todolist')
-      debugger
-    }
-    if (el.nodeType === Node.TEXT_NODE) return
-
-    if (el.attributes && el.attributes.length) {
-      // attrs should copy out
-      const attrs = [].map.call(el.attributes, ({ name, value }) => ({
-        name,
-        value
-      }))
-      attrs.forEach(({ name, value }) => {
-        const directive = Binding.parse(name, value)
-        if (!directive) return
-        // if (directive.variable === 'todos') debugger
-        this._bind(el, directive)
-        // 移除结点上的指令
-        el.removeAttribute(name)
-      })
-    }
-    // 给遍历模板元素标记因为不需要子元素，所以直接pass，然后删除
-    if (el[BLOCK]) return console.log(el, 'BLOCK')
-    el.childNodes.forEach(this._compileNode.bind(this))
   }
 
   // 指令绑定el,vue实例
