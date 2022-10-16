@@ -1,5 +1,5 @@
-const Directive = require('./directive')
-const { block, CONTROLLER, BLOCK } = require('./config')
+const Binding = require('./binding')
+const { CONTROLLER, BLOCK } = require('./config')
 const Controllers = require('./controllers')
 
 class Seed {
@@ -39,11 +39,7 @@ class Seed {
 
   _extension() {
     const controller = Controllers[this.controllerName]
-    for (let ext in controller) {
-      if (this.scope[ext])
-        console.warn('extension already exist, will be overwritten. extension=', ext)
-      this.scope[ext] = controller[ext]
-    }
+    controller.call(null, this.scope, this)
   }
 
   _compileNode(el) {
@@ -56,7 +52,7 @@ class Seed {
         value
       }))
       attrs.forEach(({ name, value }) => {
-        const directive = Directive.parse(name, value)
+        const directive = Binding.parse(name, value)
         if (!directive) return
         // if (directive.variable === 'todos') debugger
         this._bind(el, directive)
