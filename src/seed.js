@@ -1,5 +1,5 @@
 const Binding = require('./binding')
-const { CONTROLLER, EACH } = require('./config')
+const { CONTROLLER, EACH, prefix } = require('./config')
 const Controllers = require('./controllers')
 
 class Seed {
@@ -27,17 +27,17 @@ class Seed {
 
     if (el.attributes && el.attributes.length) {
       const build = (name, value) => {
-        const directive = Binding.parse(name, value)
+        const directive = Binding.parse(name, value.trim())
         if (!directive) return
+        // 绑定变量和指令
         this._bind(el, directive)
         // 移除结点上的指令
         el.removeAttribute(name)
       }
       const ctrol = el.getAttribute(CONTROLLER)
       const isEach = el.getAttribute(EACH)
-      console.log('Controller Name', this.controllerName, isEach)
       if (ctrol != this.controllerName && isEach) {
-        debugger
+        // debugger
         return build(EACH, isEach)
       }
       // attrs should copy out
@@ -45,7 +45,16 @@ class Seed {
         name,
         value
       }))
-      attrs.forEach(({ name, value }) => build(name, value))
+
+      attrs.forEach(({ name, value }) => {
+        // 不解析controller
+        if (name.indexOf(prefix + '-') == -1 || name == CONTROLLER) return
+        // 用于解析多个变量
+        value.split(',').forEach(expression => {
+          // debugger
+          build(name, expression)
+        })
+      })
     }
     el.childNodes.forEach(this._compileNode.bind(this))
   }

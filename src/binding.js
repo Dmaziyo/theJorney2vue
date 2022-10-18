@@ -10,6 +10,8 @@ class Directive {
     /**
      * sd-on="click:changeMessage | delegate .button" => noArg 解析为changeMessage | delegate .button
      * sd-text="msg | capitalize" =>noArg解析为msg | capitalize
+     * arg:click
+     * noArg:changeMessage | delegate .button
      */
     let [, arg, noArg] = value.match(/(^\w+):(.+)/) || []
     noArg = noArg ? noArg : value
@@ -39,9 +41,12 @@ class Directive {
 
   _applyFilters(value) {
     let tmpVal = value
+    //按照filter顺序,把tmpVal逐步filter加工
     this._filters.forEach(({ apply, args }) => {
       args.unshift(tmpVal)
+      tmpVal = apply.apply(apply, args)
     })
+    return tmpVal
   }
 
   _buildUpdate(key) {
@@ -56,17 +61,14 @@ class Directive {
   }
 
   update(newVal) {
-    const { _filter } = this
-    // 修改filter
-    this._update(_filter ? _filter(newVal) : newVal)
+    const { _filters } = this
+    // debugger
+    this._update(_filters ? this._applyFilters(newVal) : newVal)
   }
 }
 
 module.exports = {
   parse(name, value) {
-    // 不解析controller
-    if (name.indexOf(prefix + '-') == -1 || name == CONTROLLER) return
-
     return new Directive(name, value)
   }
 }

@@ -2,7 +2,6 @@ const { BLOCK, mutatorMethods } = require('./config')
 // 引用mutator方法
 module.exports = {
   text: function (value) {
-    // debugger
     this.el.textContent = value || ''
   },
   show: function (value) {
@@ -55,6 +54,7 @@ module.exports = {
       this.childSeeds.forEach(seed => seed.destroy())
       this.childSeeds = []
 
+      // 重置数组的方法
       this.watchArray(collection)
 
       collection.forEach(element => {
@@ -75,7 +75,6 @@ module.exports = {
           this.update(collection)
         }
       })
-      console.log('collection', collection)
     },
     buildHtml(data) {
       // 相比之前，直接自己去掉字符串变量todo.message的前缀todo
