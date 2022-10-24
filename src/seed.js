@@ -86,12 +86,23 @@ class Seed {
   _bind(el, directive) {
     directive.el = el
     directive.seed = this
+
+    let scopeOwner = this
     const epr = this._options.eachPrefixRE
     let { variable } = directive
-    variable = epr ? variable.replace(epr, '') : variable
+    if (epr) {
+      // 说明该变量属于child
+      if (epr.test(variable)) {
+        variable = variable.replace(epr, '')
+      }
+      // 说明该变量属于parent,切换scopeOwner
+      else {
+        scopeOwner = this._options.parentScope
+      }
+    }
 
-    if (!this._bindings[variable]) this._createBinding(variable)
-    this._bindings[variable].directives.push(directive)
+    if (!scopeOwner._bindings[variable]) scopeOwner._createBinding(variable)
+    scopeOwner._bindings[variable].directives.push(directive)
 
     // 用于todos的绑定
     // 将元素从ul中删除，但记录在directive里面,同时建立联系

@@ -19,6 +19,7 @@ module.exports = {
       if (handler) {
         // bind scope to handler
         handler = handler.bind(seed)
+        // 因为el子元素和changeMessage是同一作用域,所以handler添加到子元素事件中
         el.addEventListener(event, handler)
         this.handlers = { [event]: handler, ...handlers }
       }

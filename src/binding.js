@@ -47,6 +47,7 @@ class Binding {
        * tmpVal = function(){}-> args.unshift(tmpVal)
        */
       args.unshift(tmpVal)
+      // apply 是过滤函数
       tmpVal = apply.apply(apply, args)
     })
     return tmpVal
