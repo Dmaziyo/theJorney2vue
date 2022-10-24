@@ -2,7 +2,7 @@ const Filters = require('./filters')
 const Directives = require('./directives')
 const { prefix, CONTROLLER } = require('./config')
 
-class Directive {
+class Binding {
   // 添加了参数配置选项
   constructor(name, value, options = {}) {
     // 获取指令name
@@ -43,6 +43,9 @@ class Directive {
     let tmpVal = value
     //按照filter顺序,把tmpVal逐步filter加工
     this._filters.forEach(({ apply, args }) => {
+      /**
+       * tmpVal = function(){}-> args.unshift(tmpVal)
+       */
       args.unshift(tmpVal)
       tmpVal = apply.apply(apply, args)
     })
@@ -69,6 +72,6 @@ class Directive {
 
 module.exports = {
   parse(name, value) {
-    return new Directive(name, value)
+    return new Binding(name, value)
   }
 }

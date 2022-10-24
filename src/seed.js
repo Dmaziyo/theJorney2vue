@@ -26,6 +26,7 @@ class Seed {
     if (el.nodeType === Node.TEXT_NODE) return
 
     if (el.attributes && el.attributes.length) {
+      // 根据指令和变量构建一个binding
       const build = (name, value) => {
         const directive = Binding.parse(name, value.trim())
         if (!directive) return
@@ -65,6 +66,7 @@ class Seed {
     for (let bindKey in this._bindings) {
       this._bindings[bindKey].directives.forEach(directive => {
         if (!directive.unbind) return
+        // 删除eventListener
         directive.unbind()
       })
 
