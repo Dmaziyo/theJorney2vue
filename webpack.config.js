@@ -22,5 +22,10 @@ module.exports = {
         }
       }
     ]
+  },
+  resolve: {
+    alias: {
+      emitter$: 'component-emitter'
+    }
   }
 }
