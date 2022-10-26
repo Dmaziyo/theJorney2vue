@@ -12,6 +12,8 @@ module.exports = {
   },
   on: {
     update: function (handler) {
+      // 因为handler目前只能有一个,so handlers are redundant
+      // so optimize it based on this.handler other than  handlers
       const { handlers = {}, arg: event, el, seed } = this
 
       if (handlers[event]) el.removeEventListener(event, handlers[event])
@@ -38,7 +40,7 @@ module.exports = {
       }
     }
   },
-
+  // 添加checked指令,用于将checkbox的属性checked和指定变量绑定在一起
   each: {
     bind() {
       // 将元素从ul中删除，但记录在directive里面,同时建立联系

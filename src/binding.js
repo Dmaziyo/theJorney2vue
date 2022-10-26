@@ -72,6 +72,7 @@ class Binding {
 }
 
 module.exports = {
+  // optimize exports
   parse(name, value) {
     return new Binding(name, value)
   }
