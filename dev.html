@@ -44,6 +44,7 @@
       })
 
       Seed.controller('TodoList', function (scope, seed) {
+        seed.on('haha', console.log.bind(console))
         console.log('controller invoked')
         scope.changeMessage = function () {
           scope.msg = (Math.random() * 100).toFixed(2) + '% awesomeness'
@@ -53,10 +54,11 @@
         }
       })
 
-      Seed.controller('Todo', function (scope) {
+      Seed.controller('Todo', function (scope, seed) {
         scope.toggle = function () {
           // debugger
           scope.done = !scope.done
+          seed.emit('haha', 'haaha')
         }
         // should call TodoList.changeMessage
         // scope.changeMessage = function () {

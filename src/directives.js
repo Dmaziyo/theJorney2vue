@@ -85,7 +85,7 @@ module.exports = {
        * 例如：todo.msg
        * 就去掉todo.->msg,方便直接遍历
        */
-      debugger
+      // debugger
       return new Seed({
         el,
         data,

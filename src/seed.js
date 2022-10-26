@@ -126,5 +126,5 @@ class Seed {
     })
   }
 }
-
+Emitter(Seed.prototype)
 module.exports = Seed
