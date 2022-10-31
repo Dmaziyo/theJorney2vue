@@ -30,7 +30,7 @@ class Seed {
       // 根据指令和变量构建一个binding
       const build = (name, value) => {
         // use Binding class instead of parse
-        const directive = Binding.parse(name, value.trim())
+        const directive = new Binding(name, value.trim())
         if (!directive) return
         // 绑定变量和指令
         this._bind(el, directive)
@@ -81,7 +81,8 @@ class Seed {
 
   _extension() {
     const controller = Controllers[this.controllerName]
-    // optimize: if controller doesn't exist,just return back
+    if (!controller) return
+    debugger
     controller.call(null, this.scope, this)
   }
 
@@ -97,10 +98,11 @@ class Seed {
       // 说明该变量属于child
       if (epr.test(variable)) {
         variable = variable.replace(epr, '')
-        // fix the variable down below here
+        directive.variable = variable
       }
       // 说明该变量属于parent,切换scopeOwner
       else {
+        debugger
         scopeOwner = this._options.parentScope
       }
     }

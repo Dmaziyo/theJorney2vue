@@ -12,23 +12,22 @@ module.exports = {
   },
   on: {
     update: function (handler) {
-      // 因为handler目前只能有一个,so handlers are redundant
-      // so optimize it based on this.handler other than  handlers
-      const { handlers = {}, arg: event, el, seed } = this
+      const { arg: event, el, seed } = this
 
-      if (handlers[event]) el.removeEventListener(event, handlers[event])
+      if (this.handler) el.removeEventListener(event, this.handler)
 
       if (handler) {
         // bind scope to handler
-        handler = handler.bind(seed)
+        this.handler = e => {
+          return handler({ el, event: e, seed })
+        }
         // 因为el子元素和changeMessage是同一作用域,所以handler添加到子元素事件中
-        el.addEventListener(event, handler)
-        this.handlers = { [event]: handler, ...handlers }
+        el.addEventListener(event, this.handler)
       }
     },
     unbind: function () {
       if (this.handlers) {
-        this.el.removeEventListener(this.arg, this.handlers[this.arg])
+        this.el.removeEventListener(this.arg, this.handler)
       }
     },
     customFilter: function (handler, selectors) {
@@ -40,7 +39,25 @@ module.exports = {
       }
     }
   },
-  // 添加checked指令,用于将checkbox的属性checked和指定变量绑定在一起
+  /**
+   * 用于将checkbox的属性checked和指定变量双向绑定在一起
+   * 例如click checkbox,然后checked发生变化->绑定的变量done也发生变化
+   */
+  checked: {
+    // 监听change事件
+    bind() {
+      this.handler = () => {
+        this.seed.scope[this.variable] = this.el.checked
+      }
+      this.el.addEventListener('change', this.handler)
+    },
+    update(flag) {
+      this.el.checked = flag
+    },
+    unbind() {
+      this.el.removeEventListener('change', this.handler)
+    }
+  },
   each: {
     bind() {
       // 将元素从ul中删除，但记录在directive里面,同时建立联系
@@ -66,6 +83,11 @@ module.exports = {
         this.childSeeds.push(seed)
         this.container.append(seed.el)
       })
+      /**
+       * 因为数组更新后,虽然childSeed建立了联系，但是没有重新调用extension
+       * 将新建的变量值重新绑定
+       */
+      this.seed._extension()
     },
     /**
      为绑定的数组的方法设置回调函数，每当修改数组的时候,回调update
